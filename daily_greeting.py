@@ -37,7 +37,7 @@ def send_daily_greeting():
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": greeting}
     requests.post(url, data=payload)
-    print(f"{datetime.now()} - ارسال شد: {greeting")
+    print(datetime.now(), "- ارسال شد:", greeting)
 
 schedule.every().day.at("04:30").do(send_daily_greeting)  # ۸ صبح ایران
 

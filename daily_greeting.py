@@ -4,7 +4,9 @@ from datetime import datetime
 import schedule
 import time
 from groq import Groq
+import threading
 
+# تنظیمات از متغیرهای محیطی
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -36,12 +38,26 @@ def send_daily_greeting():
     greeting = generate_greeting()
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": greeting}
-    requests.post(url, data=payload)
-    print(datetime.now(), "- ارسال شد:", greeting)
+    try:
+        requests.post(url, data=payload)
+        print(f"{datetime.now()} - پیام ارسال شد: {greeting}")
+    except Exception as e:
+        print("خطا در ارسال پیام:", e)
 
-schedule.every().day.at("04:30").do(send_daily_greeting)  # ۸ صبح ایران
+# اولین سلام همین الان (برای تست)
+send_daily_greeting()
 
-print("ربات سلام روزانه فعال شد...")
-while True:
-    schedule.run_pending()
-    time.sleep(60)
+# زمان‌بندی روزانه (۸ صبح ایران = 04:30 UTC)
+schedule.every().day.at("04:30").do(send_daily_greeting)
+
+# این بخش برای زنده نگه داشتن سرویس Render (هر ۱۰ دقیقه یه پیام چاپ می‌کنه)
+def keep_alive():
+    count = 0
+    while True:
+        time.sleep(600)  # هر ۱۰ دقیقه
+        count += 1
+        print(f"ربات زنده است - {count * 10} دقیقه از شروع گذشت ❤️")
+
+threading.Thread(target=keep_alive, daemon=True).start()
+
+print("ربات سلام روزانه با موفقیت فعال شد و در حال اجراست... 🚀")

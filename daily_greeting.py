@@ -27,7 +27,7 @@ def generate_greeting():
     prompt = f"یک پیام سلام گرم، انگیزشی و کوتاه فارسی بنویس. فقط {time_of_day} بخیر باشه. حداکثر ۲-۳ جمله با ایموجی."
 
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
+        model="llama-3.1-8b-instant",  # مدل جدید و پیشنهادی Groq
         messages=[{"role": "user", "content": prompt}],
         max_tokens=100,
         temperature=0.9
